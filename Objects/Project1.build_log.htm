@@ -1,0 +1,103 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.33.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Erkovich Stepan, NSU, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.33.0.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.15
+Assembler:       Armasm.exe V6.15
+Linker/Locator:  ArmLink.exe V6.15
+Library Manager: ArmAr.exe V6.15
+Hex Converter:   FromElf.exe V6.15
+CPU DLL:         SARMCM3.DLL V5.33.0.0
+Dialog DLL:      DARMCM1.DLL V1.19.4.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
+Dialog DLL:      TARMCM1.DLL V1.14.3.0
+ 
+<h2>Project:</h2>
+C:\Users\Public\Documents\microVisionProjects\Project1.uvprojx
+Project File Date:  05/04/2021
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.15', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
+Build target 'Target 1'
+main2.c(5): warning: In file included from...
+./button.h(14): warning: padding struct 'struct _Button' with 2 bytes to align 'countTicksAfterLastToggling' [-Wpadded]
+        int countTicksAfterLastToggling; //ticks after last changing state (Chenging state can be made only when this one greater then ticksDisabling)
+            ^
+main2.c(6): warning: In file included from...
+./spi_matrix.h(87): warning: unused parameter 'packet' [-Wunused-parameter]
+void senderDataBitPacket(Packet* packet)
+                                 ^
+main2.c(7): warning: In file included from...
+./cloud_sound.h(7): warning: padding struct 'struct _Pip' with 3 bytes to align 'play_stage' [-Wpadded]
+        int play_stage;
+            ^
+main2.c(98): warning: implicit conversion loses integer precision: 'volatile uint32_t' (aka 'volatile unsigned int') to 'uint16_t' (aka 'unsigned short') [-Wimplicit-int-conversion]
+        volatile uint16_t data = SPI2->DR;
+                          ~~~~   ~~~~~~^~
+main2.c(98): warning: unused variable 'data' [-Wunused-variable]
+        volatile uint16_t data = SPI2->DR;
+                          ^
+main2.c(57): warning: no previous extern declaration for non-static variable 'buttons' [-Wmissing-variable-declarations]
+Button buttons[4];
+       ^
+main2.c(57): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+Button buttons[4];
+^
+main2.c(58): warning: no previous extern declaration for non-static variable 'packet' [-Wmissing-variable-declarations]
+Packet packet;
+       ^
+main2.c(58): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+Packet packet;
+^
+main2.c(59): warning: no previous extern declaration for non-static variable 'pip' [-Wmissing-variable-declarations]
+Pip pip;
+    ^
+main2.c(59): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+Pip pip;
+^
+8 warnings generated.
+compiling main2.c...
+linking...
+Program Size: Code=3188 RO-data=240 RW-data=4 ZI-data=1776  
+".\Objects\Project1.axf" - 0 Error(s), 8 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.7.0.pack
+                ARM.CMSIS.5.7.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.4.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F0xx_DFP.2.1.0.pack
+                Keil.STM32F0xx_DFP.2.1.0
+                STMicroelectronics STM32F0 Series Device Support, Drivers and Examples
+   * Component: Startup Version: 1.0.0
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_Target_1
+  C:\Keil_v5\tmp_my\ARM\CMSIS\5.7.0\CMSIS\Core\Include
+  C:\Keil_v5\tmp_my\Keil\STM32F0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.4.0
+
+   * Component: Keil.Standalone::Device:Startup:1.0.0
+      Source file:   Drivers\CMSIS\Device\ST\STM32F0xx\Source\Templates\arm\startup_stm32f072xb.s
+      Source file:   Drivers\CMSIS\Device\ST\STM32F0xx\Source\Templates\system_stm32f0xx.c
+      Source file:   MDK\Device\Source\ARM\STM32F0xx_OPT.s
+      Include file:  Drivers\CMSIS\Device\ST\STM32F0xx\Include\stm32f0xx.h
+Build Time Elapsed:  00:00:02
+</pre>
+</body>
+</html>
