@@ -72,15 +72,22 @@ void dataLoaderPacket(Packet* packet);
 void dataLoaderPacket(Packet* packet)
 {
 	GPIOA->ODR &= ~GPIO_ODR_8;
-			SPI2->DR = (			((0x1U << 0)& (packet->data[0][packet->sendingStage]?0xFF:0x00))|
-												((0x1U << 1)& (packet->data[1][packet->sendingStage]?0xFF:0x00))|
-												((0x1U << 2)& (packet->data[2][packet->sendingStage]?0xFF:0x00))|
-												((0x1U << 3)& (packet->data[3][packet->sendingStage]?0xFF:0x00))|
-												((0x1U << 4)& (packet->data[4][packet->sendingStage]?0xFF:0x00))|
-												((0x1U << 5)& (packet->data[5][packet->sendingStage]?0xFF:0x00))|
-												((0x1U << 6)& (packet->data[6][packet->sendingStage]?0xFF:0x00))|
-												((0x1U << 7)& (packet->data[7][packet->sendingStage]?0xFF:0x00))
-		)<< 8 | (0x1U << packet->sendingStage);
+			SPI2->DR = (			((0x1U << 0)& (packet->data[0][packet->sendingStage/2]?0xFF:0x00))|
+												((0x1U << 1)& (packet->data[1][packet->sendingStage/2]?0xFF:0x00))|
+												((0x1U << 2)& (packet->data[2][packet->sendingStage/2]?0xFF:0x00))|
+												((0x1U << 3)& (packet->data[3][packet->sendingStage/2]?0xFF:0x00))|
+												((0x1U << 4)& (packet->data[4][packet->sendingStage/2]?0xFF:0x00))|
+												((0x1U << 5)& (packet->data[5][packet->sendingStage/2]?0xFF:0x00))|
+												((0x1U << 6)& (packet->data[6][packet->sendingStage/2]?0xFF:0x00))|
+												((0x1U << 7)& (packet->data[7][packet->sendingStage/2]?0xFF:0x00))
+		)<< 8 | (0x1U << packet->sendingStage/2);
+}
+
+void dataClearerPacket(Packet* packet);
+void dataClearerPacket(Packet* packet)
+{
+	GPIOA->ODR &= ~GPIO_ODR_8;
+			SPI2->DR = (0x00)<< 8 | (0x1U << (packet->sendingStage/2));
 }
 
 void senderDataBitPacket(Packet* packet);
@@ -92,10 +99,18 @@ void senderDataBitPacket(Packet* packet)
 void stagingPacket(Packet* packet);
 void stagingPacket(Packet* packet)
 {
-	dataLoaderPacket(packet);
-	senderDataBitPacket(packet);
+	if (packet->sendingStage%2 == 0)
+	{
+		senderDataBitPacket(packet);
+		dataLoaderPacket(packet);
+	}
+	else
+	{
+		senderDataBitPacket(packet);
+		dataClearerPacket(packet);
+	}
 	packet->sendingStage++;
-	if (packet->sendingStage == 8)
+	if (packet->sendingStage == 16)
 		packet->sendingStage = 0;
 }
 
