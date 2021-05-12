@@ -25,7 +25,7 @@ void initSPI(void)
 		| SPI_CR1_SSI 
 		//| SPI_CR1_LSBFIRST 
 		| SPI_CR1_BR 
-		| SPI_CR1_MSTR 
+		| SPI_CR1_MSTR
 		| SPI_CR1_CPOL 
 		| SPI_CR1_CPHA;
 	
@@ -99,14 +99,13 @@ void senderDataBitPacket(Packet* packet)
 void stagingPacket(Packet* packet);
 void stagingPacket(Packet* packet)
 {
+	senderDataBitPacket(packet);
 	if (packet->sendingStage%2 == 0)
 	{
-		senderDataBitPacket(packet);
 		dataLoaderPacket(packet);
 	}
 	else
 	{
-		senderDataBitPacket(packet);
 		dataClearerPacket(packet);
 	}
 	packet->sendingStage++;

@@ -6,6 +6,8 @@
 #include "spi_matrix.h"
 #include "cloud_sound.h"
 
+//rs485
+//usart (uart)
 
 void Init(void);
 void timer_init(void);
