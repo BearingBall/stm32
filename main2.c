@@ -95,7 +95,6 @@ void SysTick_Handler (void)
 	GPIOA->IDR &= ~GPIO_IDR_5;
 	
 	PipEveryTick(&pip);
-	
 }
 
 void SPI2_IRQHandler(void);
@@ -195,21 +194,8 @@ int main(void)
 			}
 		}
 		*/
-		osc = blockingRead();
+		drawOSC(&packet);
 		
-		
-		for(int i = 0; i<8;i++)
-		for(int j = 0; j<8;j++)
-		{
-			if (i<((osc+1)*8)/1024)
-			{
-				packet.data[i][j] = true;
-			}
-			else
-			{
-				packet.data[i][j] = false;
-			}
-		}
 		
 	}
 }

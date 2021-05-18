@@ -1,3 +1,6 @@
+#ifndef SPI_MATRIX
+#define SPI_MATRIX
+
 #include <stm32f0xx.h>
 #include <stdbool.h>
 
@@ -146,3 +149,5 @@ void sendCrossSPI(int x, int y)
 		while (SPI2->SR & SPI_SR_BSY);
 		GPIOA->ODR |= GPIO_ODR_8;
 }
+
+#endif

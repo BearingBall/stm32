@@ -1,4 +1,5 @@
 #include <stm32f0xx.h>
+#include "spi_matrix.h"
 
 void initADC()
 {
@@ -18,4 +19,29 @@ uint16_t blockingRead()
 	ADC1->CR |= ADC_CR_ADSTART; /* Start the ADC conversion */
 	while (!(ADC1->ISR & ADC_ISR_EOC)) {} /* Wait end of Analot to Digital Conversion */
 	return ADC1->DR; /* Store the ADC conversion result */
+}
+
+int timing = 0;
+
+void drawOSC(Packet* packet)
+{
+	if (timing > 10000)
+	{
+	timing = 0;
+	uint16_t osc = (blockingRead()+1)*8/1024;
+	for(int i = 0; i<8;i++)
+		for(int j = 0; j<7;j++)
+				packet->data[i][j] = packet->data[i][j+1];
+	
+	for(int i = 0; i<8;i++)
+			if (i<osc)
+			{
+				packet->data[i][7] = true;
+			}
+			else
+			{
+				packet->data[i][7] = false;
+			}
+		}
+	timing++;
 }
