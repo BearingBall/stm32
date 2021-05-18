@@ -58,14 +58,14 @@ void resetBitV(volatile uint32_t* bit, uint32_t value)
 	*bit &= ~value;
 }
 
-void SysTick_Handler (void);
+void SysTick_Handler(void);
 
 Button buttons[4];
 Packet packet;
 Pip pip;
+DMA dma;
 
-
-void SysTick_Handler (void)
+void SysTick_Handler(void)
 {	
 	GPIOA->ODR &= ~GPIO_ODR_15;
 	GPIOC->ODR &= ~GPIO_ODR_12;
@@ -105,6 +105,22 @@ void SPI2_IRQHandler(void)
 	stagingPacket(&packet);
 }
 
+void  DMA1_Channel1_IRQHandler(void);
+
+void  DMA1_Channel1_IRQHandler(void){    //  DMA ADC1
+	
+	if (DMA1->ISR & DMA_ISR_HTIF1) {    // Channel 1 Half Transfer flag
+		dma.DMA_half=true;
+		DMA1->IFCR |= DMA_IFCR_CHTIF1;
+	}
+
+	if (DMA1->ISR & DMA_ISR_TCIF1) {    // Channel 1 Transfer Complete flag
+		dma.DMA_full=true;
+		DMA1->IFCR |= DMA_IFCR_CTCIF1;
+	}
+
+}
+
 void initialAnimation(int slowless);
 
 void initialAnimation(int slowless)
@@ -130,6 +146,7 @@ int main(void)
 	Init();
 	timer_init();
 	initSPI();
+	initDMA(&dma);
 	ConstrPacket(&packet);
 	ConstrPip(&pip);
 	int x = 4;
@@ -139,8 +156,7 @@ int main(void)
 		ConstrButton(&(buttons[i]));
 	}
 	
-	initialAnimation(4000);
-	uint16_t osc = 4;
+	initialAnimation(1000);
 	
 	while(1)
 	{
@@ -194,7 +210,8 @@ int main(void)
 			}
 		}
 		*/
-		drawOSC(&packet);
+		//drawOSC(&packet, blockingRead());
+		DMAEveryTick(&dma, &packet);
 		
 		
 	}

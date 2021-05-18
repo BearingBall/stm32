@@ -403,6 +403,11 @@
               <FileType>5</FileType>
               <FilePath>.\cloud_sound.h</FilePath>
             </File>
+            <File>
+              <FileName>oscil.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\oscil.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
