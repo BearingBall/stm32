@@ -5,6 +5,7 @@
 #include "button.h"
 #include "spi_matrix.h"
 #include "cloud_sound.h"
+#include "oscil.h"
 
 //rs485
 //usart (uart)
@@ -14,7 +15,7 @@ void timer_init(void);
 
 void Init()
 {
-	RCC->AHBENR |= RCC_AHBENR_GPIOCEN|RCC_AHBENR_GPIOAEN;
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN|RCC_AHBENR_GPIOAEN|RCC_AHBENR_GPIOBEN;
 	GPIOA->MODER &= ~GPIO_MODER_MODER0;
 	
 	GPIOC->MODER &= ~GPIO_MODER_MODER6;//sbros
@@ -34,6 +35,9 @@ void Init()
 	GPIOA->MODER &= ~GPIO_MODER_MODER15; //sbros
 	GPIOA->MODER |= GPIO_MODER_MODER15_0; //output mode
 	
+	
+	GPIOA->MODER |= GPIO_MODER_MODER1; //PA1 analog mode
+	initADC();
 }
 
 void timer_init(void)
@@ -59,6 +63,7 @@ void SysTick_Handler (void);
 Button buttons[4];
 Packet packet;
 Pip pip;
+
 
 void SysTick_Handler (void)
 {	
@@ -136,10 +141,11 @@ int main(void)
 	}
 	
 	initialAnimation(4000);
+	uint16_t osc = 4;
 	
 	while(1)
 	{
-		
+		/*
 		if (buttons[0].valueChanged)
 		{
 			buttons[0].valueChanged = false;
@@ -188,7 +194,22 @@ int main(void)
 				packet.data[i][j] = false;
 			}
 		}
+		*/
+		osc = blockingRead();
 		
+		
+		for(int i = 0; i<8;i++)
+		for(int j = 0; j<8;j++)
+		{
+			if (i<((osc+1)*8)/1024)
+			{
+				packet.data[i][j] = true;
+			}
+			else
+			{
+				packet.data[i][j] = false;
+			}
+		}
 		
 	}
 }
