@@ -8,6 +8,7 @@ typedef struct _Pip
 	int play_longitude;
 }Pip;
 
+Pip pip;
 
 void ConstrPip(Pip* pip);
 void ConstrPip(Pip* pip)

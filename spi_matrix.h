@@ -59,6 +59,8 @@ typedef struct _Packet
 	
 }Packet;
 
+Packet packet;
+
 void ConstrPacket(Packet* packet);
 
 void ConstrPacket(Packet* packet)
@@ -149,5 +151,15 @@ void sendCrossSPI(int x, int y)
 		while (SPI2->SR & SPI_SR_BSY);
 		GPIOA->ODR |= GPIO_ODR_8;
 }
+
+
+void SPI2_IRQHandler(void);
+
+void SPI2_IRQHandler(void)
+{	
+	volatile uint16_t data = SPI2->DR;
+	stagingPacket(&packet);
+}
+
 
 #endif

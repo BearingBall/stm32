@@ -5,7 +5,9 @@
 #include "button.h"
 #include "spi_matrix.h"
 #include "cloud_sound.h"
+#include "transfer.h"
 #include "oscil.h"
+#include "timer.h"
 
 //rs485
 //usart (uart)
@@ -38,13 +40,15 @@ void Init()
 	
 	
 	GPIOA->MODER |= GPIO_MODER_MODER1; //PA1 analog mode
+	
+	
 	initADC();
 }
 
 void timer_init(void)
 {
 	SystemCoreClockUpdate();
-	SysTick_Config(SystemCoreClock/1000);
+	SysTick_Config(SystemCoreClock/500);
 }
 
 void setBitV(volatile uint32_t* bit, uint32_t value);
@@ -60,11 +64,6 @@ void resetBitV(volatile uint32_t* bit, uint32_t value)
 }
 
 void SysTick_Handler(void);
-
-Button buttons[4];
-Packet packet;
-Pip pip;
-DMA dma;
 
 void SysTick_Handler(void)
 {	
@@ -98,29 +97,6 @@ void SysTick_Handler(void)
 	PipEveryTick(&pip);
 }
 
-void SPI2_IRQHandler(void);
-
-void SPI2_IRQHandler(void)
-{	
-	volatile uint16_t data = SPI2->DR;
-	stagingPacket(&packet);
-}
-
-void  DMA1_Channel1_IRQHandler(void);
-
-void  DMA1_Channel1_IRQHandler(void){    //  DMA ADC1
-	
-	if (DMA1->ISR & DMA_ISR_HTIF1) {    // Channel 1 Half Transfer flag
-		dma.DMA_half=true;
-		DMA1->IFCR |= DMA_IFCR_CHTIF1;
-	}
-
-	if (DMA1->ISR & DMA_ISR_TCIF1) {    // Channel 1 Transfer Complete flag
-		dma.DMA_full=true;
-		DMA1->IFCR |= DMA_IFCR_CTCIF1;
-	}
-
-}
 
 void initialAnimation(int slowless);
 
@@ -142,14 +118,18 @@ void initialAnimation(int slowless)
 }
 
 
+
 int main(void)
 {
 	Init();
 	timer_init();
 	initSPI();
 	initDMA(&dma);
+	initializeTimer();
 	ConstrPacket(&packet);
 	ConstrPip(&pip);
+	//ConstrTransfer(&transfer, true);
+	ConstrTransfer(&transfer, false);
 
 	for(int i = 0; i<4;++i)
 	{
@@ -160,7 +140,23 @@ int main(void)
 	
 	while(1)
 	{
-		DMAEveryTick(&dma, &packet);
+		
+		if (transfer.isTransmit)
+		{
+			uint16_t value = DMAEveryTick(&dma, &packet);
+			//drawNumber(&packet, (timer.counter/50)%1024);
+			
+			value = value/4;
+			
+			transfer.data = value;
+
+			transmitMessage(&transfer);
+		}
+		else
+		{
+			receiveMessage(&transfer);
+			drawNumber(&packet, transfer.data*4 );
+		}
 		
 	}
 }

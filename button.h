@@ -15,6 +15,8 @@ typedef struct _Button
 	int ticksDisabling; //tick time of disabling (drebezg)
 }Button;
 
+Button buttons[4];
+
 void ConstrButton(Button* button);
 
 void ConstrButton(Button* button)

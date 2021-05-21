@@ -70,6 +70,7 @@ typedef struct _DMA
 	bool DMA_half;
 	bool DMA_full;
 }DMA;
+DMA dma;
 
 void initDMA(DMA* dma)
 {
@@ -99,7 +100,7 @@ to the peripheral, this must check in the datasheet. */
 	DMA1_Channel1->CCR |= DMA_CCR_MINC | DMA_CCR_MSIZE_0 | DMA_CCR_PSIZE_0; /* (6) */
 	//DMA1_Channel1->CCR |= DMA_CCR_TEIE | DMA_CCR_TCIE ;
 	DMA1_Channel1->CCR |= DMA_CCR_PL | DMA_CCR_CIRC;
-	DMA1_Channel1->CCR |= DMA_CCR_HTIE|DMA_CCR_TCIE;
+	DMA1_Channel1->CCR |= DMA_CCR_TCIE;
 	DMA1_Channel1->CCR |= DMA_CCR_EN; /* (7) */
 	/* Configure NVIC for DMA */
 	/* (1) Enable Interrupt on DMA Channel 1 */
@@ -108,7 +109,7 @@ to the peripheral, this must check in the datasheet. */
 	//NVIC_SetPriority(DMA1_Channel1_IRQn,0);
 }
 
-void DMAEveryTick(DMA* dma, Packet* packet)
+uint16_t DMAEveryTick(DMA* dma, Packet* packet)
 {
 	uint16_t result = 0;
 	if (dma->DMA_half) {
@@ -117,15 +118,17 @@ void DMAEveryTick(DMA* dma, Packet* packet)
 			dma->DMA_half = false;
 		//drawOSC(packet, result);
 		drawNumber(packet, result);
+		return result;
 		}
 	if (dma->DMA_full) {
 		result = dma->ADC_array[8] +  dma->ADC_array[9] + dma->ADC_array[10] + dma->ADC_array[11] + dma->ADC_array[12] + dma->ADC_array[13] + dma->ADC_array[14] + dma->ADC_array[15];
 		result = result/8;
 		dma->DMA_full = false;
 		//drawNumber(packet, result);
+		return result;
 	}
+	return 0;
 }
-
 
 void initSP(DMA* dma) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOCEN | RCC_AHBENR_GPIOBEN | RCC_AHBENR_GPIOAEN;
@@ -206,4 +209,19 @@ void initSP(DMA* dma) {
 
 }
 
+void  DMA1_Channel1_IRQHandler(void);
+
+void  DMA1_Channel1_IRQHandler(void){    //  DMA ADC1
+	
+	if (DMA1->ISR & DMA_ISR_HTIF1) {    // Channel 1 Half Transfer flag
+		dma.DMA_half=true;
+		DMA1->IFCR |= DMA_IFCR_CHTIF1;
+	}
+
+	if (DMA1->ISR & DMA_ISR_TCIF1) {    // Channel 1 Transfer Complete flag
+		dma.DMA_full=true;
+		DMA1->IFCR |= DMA_IFCR_CTCIF1;
+	}
+
+}
 
