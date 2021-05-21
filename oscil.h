@@ -1,6 +1,7 @@
 #include <stm32f0xx.h>
 #include <stdbool.h>
 #include "spi_matrix.h"
+#include "numberToMatrix.h"
 
 void initADC()
 {
@@ -36,7 +37,7 @@ void drawOSC(Packet* packet, uint16_t value)
 				packet->data[i][j] = packet->data[i][j+1];
 	
 	for(int i = 0; i<8;i++)
-			if (i<osc)
+			if (i==osc)
 			{
 				packet->data[i][7] = true;
 			}
@@ -47,6 +48,21 @@ void drawOSC(Packet* packet, uint16_t value)
 		}
 	timing++;
 }
+
+void drawNumber(Packet* packet, uint16_t value)
+{
+	if (timing > 1000)
+	{
+		timing = 0;
+	uint16_t osc = (value+1)*99/1024;
+	for(int i = 0; i<8;i++)
+		for(int j = 0; j<8;j++)
+				packet->data[i][j] = false;
+	numberToMatrix(packet, osc);
+	}
+	timing++;
+}
+
 
 typedef struct _DMA
 {
@@ -99,19 +115,16 @@ void DMAEveryTick(DMA* dma, Packet* packet)
 			result = dma->ADC_array[0] +  dma->ADC_array[1] + dma->ADC_array[2] + dma->ADC_array[3] + dma->ADC_array[4] + dma->ADC_array[5] + dma->ADC_array[6] + dma->ADC_array[7];
 			result = result/8;
 			dma->DMA_half = false;
-		drawOSC(packet, result);
+		//drawOSC(packet, result);
+		drawNumber(packet, result);
 		}
 	if (dma->DMA_full) {
 		result = dma->ADC_array[8] +  dma->ADC_array[9] + dma->ADC_array[10] + dma->ADC_array[11] + dma->ADC_array[12] + dma->ADC_array[13] + dma->ADC_array[14] + dma->ADC_array[15];
 		result = result/8;
 		dma->DMA_full = false;
-		drawOSC(packet, result);
+		//drawNumber(packet, result);
 	}
 }
-
-
-
-
 
 
 void initSP(DMA* dma) {
@@ -192,3 +205,5 @@ void initSP(DMA* dma) {
 	NVIC_SetPriority(DMA1_Channel1_IRQn,0);
 
 }
+
+

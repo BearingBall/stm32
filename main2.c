@@ -9,6 +9,7 @@
 
 //rs485
 //usart (uart)
+//one-wire usart implementation
 
 void Init(void);
 void timer_init(void);
@@ -149,8 +150,7 @@ int main(void)
 	initDMA(&dma);
 	ConstrPacket(&packet);
 	ConstrPip(&pip);
-	int x = 4;
-	int y = 4;
+
 	for(int i = 0; i<4;++i)
 	{
 		ConstrButton(&(buttons[i]));
@@ -160,59 +160,7 @@ int main(void)
 	
 	while(1)
 	{
-		/*
-		if (buttons[0].valueChanged)
-		{
-			buttons[0].valueChanged = false;
-				if (y>0)
-				y-=1;
-				pip.is_play = true;
-		}
-		
-		if (buttons[1].valueChanged)
-		{
-			buttons[1].valueChanged = false;
-				if (y<7)
-				y+=1;
-				pip.is_play = true;
-		}
-		
-		if (buttons[3].valueChanged)
-		{
-			buttons[3].valueChanged = false;
-				if (x>0)
-				x-=1;
-				pip.is_play = true;
-		}
-		
-		if (buttons[2].valueChanged)
-		{
-			buttons[2].valueChanged = false;
-				if (x<7)
-				x+=1;
-				pip.is_play = true;
-		}
-		
-		for(int i = 0; i<8;i++)
-		for(int j = 0; j<8;j++)
-		{
-			if ((i == x & j == y)|
-					(i == x+1 & j == y)|
-					(i == x-1 & j == y)|
-					(i == x & j == y+1)|
-					(i == x & j == y-1))
-			{
-				packet.data[i][j] = true;
-			}
-			else
-			{
-				packet.data[i][j] = false;
-			}
-		}
-		*/
-		//drawOSC(&packet, blockingRead());
 		DMAEveryTick(&dma, &packet);
-		
 		
 	}
 }
