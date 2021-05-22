@@ -54,7 +54,7 @@ void drawNumber(Packet* packet, uint16_t value)
 	if (timing > 1000)
 	{
 		timing = 0;
-	uint16_t osc = (value+1)*99/1024;
+	uint16_t osc = value;
 	for(int i = 0; i<8;i++)
 		for(int j = 0; j<8;j++)
 				packet->data[i][j] = false;
@@ -117,7 +117,7 @@ uint16_t DMAEveryTick(DMA* dma, Packet* packet)
 			result = result/8;
 			dma->DMA_half = false;
 		//drawOSC(packet, result);
-		drawNumber(packet, result);
+		//drawNumber(packet, result);
 		return result;
 		}
 	if (dma->DMA_full) {

@@ -15,7 +15,7 @@ void initUsartTransferTransmit()
 	/* (1) Oversampling by 16, 9600 baud */
 	/* (2) 8 data bit, 1 start bit, 1 stop bit, no parity */
 	USART3->BRR = 480000 / 96; /* (1) */
-	USART3->CR1 = USART_CR1_TE | USART_CR1_UE;/* (2) */
+	USART3->CR1 = USART_CR1_RE | USART_CR1_TE | USART_CR1_UE;/* (2) */
 	//while(!(USART3->ISR & USART_ISR_TC)); // polling idle frame Transmission
 	//USART3->ICR |= USART_ICR_TCCF; // clear TC flag
 	//USART3->CR1 |= USART_CR1_RXNEIE;
@@ -26,7 +26,7 @@ void initUsartTransferReceive()
 	/* (1) oversampling by 16, 9600 baud */
 	/* (2) 8 data bit, 1 start bit, 1 stop bit, no parity, reception mode */
 	USART3->BRR = 480000 / 96; /* (1) */
-	USART3->CR1 = USART_CR1_RE | USART_CR1_UE; /* (2) */
+	USART3->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE; /* (2) */
 }
 
 void ConstrTransfer(Transfer* transfer, bool isTransmit)
@@ -66,7 +66,7 @@ void ConstrTransfer(Transfer* transfer, bool isTransmit)
 
 void transmitMessage(Transfer* transfer)
 {
-	if (transfer->isTransmit)
+	//if (transfer->isTransmit)
 	{
 		if ((USART3->ISR & USART_ISR_TC) == USART_ISR_TC)
 		{
@@ -76,7 +76,7 @@ void transmitMessage(Transfer* transfer)
 				
 		}
 	}
-	else
+	//else
 	{
 		// you are idiotte
 	}
@@ -84,7 +84,7 @@ void transmitMessage(Transfer* transfer)
 
 void receiveMessage(Transfer* transfer)
 {
-	if (!transfer->isTransmit)
+	//if (!transfer->isTransmit)
 	{
 		int g = 0;
 		if ((USART3->ISR & USART_ISR_RXNE) == USART_ISR_RXNE)
@@ -92,7 +92,7 @@ void receiveMessage(Transfer* transfer)
 			transfer->data = (uint8_t)(USART3->RDR); /* Receive data, clear flag */
 		}
 	}
-	else
+	//else
 	{
 		// you are idiotte
 	}

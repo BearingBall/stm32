@@ -5,7 +5,7 @@ void drawSingle(Packet* packet, int number, int shift);
 
 void numberToMatrix(Packet* packet, int number)
 {
-	int first = (int)(number / 10);
+	int first = (int)(number / 10) % 10;
 	int second = number % 10;
 	
 	drawSingle(packet, first, 0);

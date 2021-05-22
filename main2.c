@@ -8,6 +8,7 @@
 #include "transfer.h"
 #include "oscil.h"
 #include "timer.h"
+#include "termometr.h"
 
 //rs485
 //usart (uart)
@@ -117,20 +118,24 @@ void initialAnimation(int slowless)
 		}
 }
 
-
-
 int main(void)
 {
 	Init();
-	timer_init();
+	//timer_init();
 	initSPI();
 	initDMA(&dma);
 	initializeTimer();
 	ConstrPacket(&packet);
 	ConstrPip(&pip);
+	
 	//ConstrTransfer(&transfer, true);
 	ConstrTransfer(&transfer, false);
-
+	
+	//temp
+	init_sys_tick();
+  udelay(1000);   
+  usart1_init();
+	//
 	for(int i = 0; i<4;++i)
 	{
 		ConstrButton(&(buttons[i]));
@@ -145,17 +150,32 @@ int main(void)
 		{
 			uint16_t value = DMAEveryTick(&dma, &packet);
 			//drawNumber(&packet, (timer.counter/50)%1024);
-			
-			value = value/4;
-			
-			transfer.data = value;
-
+			//(&packet, value*100/1024);
+			transfer.data = value*100/1024;
 			transmitMessage(&transfer);
+			
+			//uint16_t temperature = getTemp();
+			//drawNumber(&packet, temperature);
+			 
+			//for(int i = 0; i<8;i++) 
+			//{
+			//	packet.data[2][i] = !packet.data[2][i<7?i+1:0];
+			//}
+			
+			
+			//drawNumber(&packet, 0);
+
+			//value = value/4;
+			
 		}
 		else
 		{
+			//drawNumber(&packet, (timer.counter/50)%1024);
+			//(&packet, value*100/1024);
 			receiveMessage(&transfer);
-			drawNumber(&packet, transfer.data*4 );
+			drawNumber(&packet, transfer.data );
+
+			
 		}
 		
 	}

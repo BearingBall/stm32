@@ -61,6 +61,15 @@ typedef struct _Packet
 
 Packet packet;
 
+void putString(Packet* packet, int number, uint8_t string)
+{
+	for(int i=0;i<8;i++)
+	{
+		packet->data[number][i] = string % 2 == 1;
+		string = string / 2;
+	}
+}
+
 void ConstrPacket(Packet* packet);
 
 void ConstrPacket(Packet* packet)
