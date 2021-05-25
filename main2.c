@@ -128,13 +128,14 @@ int main(void)
 	ConstrPacket(&packet);
 	ConstrPip(&pip);
 	
-	ConstrTransfer(&transfer, true);
-	//ConstrTransfer(&transfer, false);
+	//ConstrTransfer(&transfer, true);
+	ConstrTransfer(&transfer, false);
 	
 	//temp
 	init_sys_tick();
 	udelay(1000);   
 	usart1_init();
+	set_resolution();
 	//
 	for(int i = 0; i<4;++i)
 	{

@@ -129,15 +129,17 @@ void ow_receive_buf(void *buf, unsigned int size)
         *p=ow_send(0xFF);
 }
 
-
-
+void set_resolution()
+{
+	ow_reset();
+	ow_send_buf("\xCC\x4E\x4B\x46\x1F", 5);
+}
 
 float getTemp()
 {
    if (ow_reset()!=OW_OK) { return 99; }
    ow_send_buf("\xCC\x44", 2);
-   //while(ow_send_bit(1)==0) {udelay(50);}
-	 udelay(50);
+   //while(ow_send_bit(1)==0) {udelay(10);}
    ow_reset();
    ow_send_buf("\xCC\xBE", 2);
    int16_t tx16=0;
