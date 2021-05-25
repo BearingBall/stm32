@@ -149,8 +149,8 @@ int main(void)
 	
 	while(1)
 	{
-		//int16_t temperature = getTemp();
-		int16_t temperature = DMAEveryTick(&dma, &packet)*100/1024;
+		int16_t temperature = getTemp();
+		//int16_t temperature = DMAEveryTick(&dma, &packet)*100/1024;
 		
 		
 		if (transfer.isTransmit)
@@ -173,9 +173,9 @@ int main(void)
 		{
 			if (receiveMessage(&transfer))
 			{
-				timer.counter = 10;
+				timer.counter = 20;
 			}
-			if (timer.counter > 30)
+			if (timer.counter > 50)
 			{
 				transfer.isTransmit = true;
 				initUsart(&transfer);
@@ -187,7 +187,6 @@ int main(void)
 		
 
 		
-		
 		if (transfer.isTransmit)
 		{
 			GPIOC->ODR |= GPIO_ODR_8;
@@ -197,20 +196,19 @@ int main(void)
 			GPIOC->ODR &= ~GPIO_ODR_8;
 		}
 		
-		
-		
-		if (LED<50)
+		if (LED<10)
 		{
 			GPIOC->ODR |= GPIO_ODR_9;
 		}
-		if (LED>50)
+		if (LED>10)
 		{
 			GPIOC->ODR &= ~GPIO_ODR_9;
 		}
-		if (LED>100)
+		if (LED>20)
 		{
 			LED = 0;
 		}
 		LED++;
+		
 	}
 }

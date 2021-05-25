@@ -136,7 +136,8 @@ float getTemp()
 {
    if (ow_reset()!=OW_OK) { return 99; }
    ow_send_buf("\xCC\x44", 2);
-   //while(ow_send_bit(1)==0) {udelay(50000);}
+   //while(ow_send_bit(1)==0) {udelay(50);}
+	 udelay(50);
    ow_reset();
    ow_send_buf("\xCC\xBE", 2);
    int16_t tx16=0;
