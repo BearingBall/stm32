@@ -143,23 +143,74 @@ int main(void)
 	
 	initialAnimation(1000);
 	
+	int LED = 0;
+	int numberOfSends = 0;
+	
+	
 	while(1)
 	{
+		//int16_t temperature = getTemp();
+		int16_t temperature = DMAEveryTick(&dma, &packet)*100/1024;
 		
-	
 		
 		if (transfer.isTransmit)
 		{
-			int16_t temperature = getTemp();
+			timer.counter = 0;
 			transfer.dataT = temperature;
-			transmitMessage(&transfer);
+			if (transmitMessage(&transfer))
+			{
+				numberOfSends++;
+				if (numberOfSends > 5)
+				{
+					transfer.isTransmit = false;
+					initUsart(&transfer);
+					timer.counter = 0;
+					numberOfSends = 0;
+				}
+			}
 		}
-		
 		else
 		{
-			receiveMessage(&transfer);
+			if (receiveMessage(&transfer))
+			{
+				timer.counter = 10;
+			}
+			if (timer.counter > 30)
+			{
+				transfer.isTransmit = true;
+				initUsart(&transfer);
+			}
 			drawNumber(&packet, transfer.dataR );
 		}
 		
+		//drawNumber(&packet, temperature );
+		
+
+		
+		
+		if (transfer.isTransmit)
+		{
+			GPIOC->ODR |= GPIO_ODR_8;
+		}
+		else
+		{
+			GPIOC->ODR &= ~GPIO_ODR_8;
+		}
+		
+		
+		
+		if (LED<50)
+		{
+			GPIOC->ODR |= GPIO_ODR_9;
+		}
+		if (LED>50)
+		{
+			GPIOC->ODR &= ~GPIO_ODR_9;
+		}
+		if (LED>100)
+		{
+			LED = 0;
+		}
+		LED++;
 	}
 }
